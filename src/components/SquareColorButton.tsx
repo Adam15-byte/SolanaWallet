@@ -31,8 +31,9 @@ export default SquareColorButton;
 const styles = StyleSheet.create({
   buttonContainer: {
     height: SIZES.SQUARE_BUTTON_HEIGHT + 30,
-    width: SIZES.SQUARE_BUTTON_HEIGHT,
+    width: SIZES.SQUARE_BUTTON_HEIGHT + 50,
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   buttonStyle: {
     height: SIZES.SQUARE_BUTTON_HEIGHT,

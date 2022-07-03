@@ -1,18 +1,46 @@
-import {ImageBackground, StyleSheet, Text, View, Image} from 'react-native';
+import {
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import React from 'react';
 import {COLORS, FONTS} from '../consts/consts';
+import {BalanceObject} from '../features/connectionContext';
+import {usdValue} from '../features/connectionContext';
 
-const BalanceCard = () => {
+interface Props {
+  balance: BalanceObject;
+  usdValue: usdValue;
+  lastTransaction: string;
+}
+
+const BalanceCard = ({balance, usdValue, lastTransaction}: Props) => {
   return (
     <View style={styles.cardContainer}>
       <ImageBackground
         style={styles.imageBackgroundStyle}
         source={require('../assets/images/CardBackground.png')}>
         <View style={styles.topRow}>
-          <View>
+          <View style={styles.leftBalanceUSDContainer}>
             <Text style={styles.currentBalanceText}>Current Balance</Text>
-            <Text style={styles.solBalance}> 3 SOL </Text>
-            <Text style={styles.usdEquivalent}> = 12,05 USD </Text>
+            <View style={styles.solAmountLoadingRow}>
+              <Text style={styles.solBalance}> {balance.balance} SOL </Text>
+              {balance.isLoading && (
+                <ActivityIndicator size="large" color={COLORS.pink} />
+              )}
+            </View>
+            <View style={styles.usdAmountLoadingRow}>
+              <Text style={styles.usdEquivalent}>
+                {' '}
+                = {usdValue.value.toFixed(2)} USD{' '}
+              </Text>
+              {usdValue.isLoading && (
+                <ActivityIndicator size="small" color={COLORS.pink} />
+              )}
+            </View>
           </View>
           <View style={styles.logoContainer}>
             <Image
@@ -23,7 +51,7 @@ const BalanceCard = () => {
         </View>
         <View style={styles.bottomRowForLastTransaction}>
           <Text style={styles.lastTransaction}>
-            Last Transaction: 31 April 2022
+            Last Transaction: {lastTransaction}
           </Text>
         </View>
       </ImageBackground>
@@ -49,7 +77,11 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 40,
     flexDirection: 'row',
-    minHeight: 80,
+    minHeight: 70,
+    justifyContent: 'space-between',
+  },
+  leftBalanceUSDContainer: {
+    minHeight: 70,
     justifyContent: 'space-between',
   },
   bottomRowForLastTransaction: {
@@ -70,10 +102,20 @@ const styles = StyleSheet.create({
     ...FONTS.h5,
     color: COLORS.white,
   },
+  solAmountLoadingRow: {
+    flexDirection: 'row',
+    height: 40,
+    alignItems: 'flex-end',
+  },
+  usdAmountLoadingRow: {
+    flexDirection: 'row',
+    height: 15,
+    alignItems: 'flex-end',
+  },
   solBalance: {
     ...FONTS.h1,
     color: COLORS.white,
-    marginTop: 5,
+    marginRight: 5,
   },
   usdEquivalent: {
     ...FONTS.h4,

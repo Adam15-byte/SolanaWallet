@@ -4,12 +4,16 @@ import React from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Copy} from 'react-native-feather';
 
-const AddressButton = () => {
+interface Props {
+  onPress: () => void;
+}
+
+const AddressButton = ({onPress}: Props) => {
   const copyToClipboard = () => {
     Clipboard.setString('hello world');
   };
   return (
-    <TouchableOpacity activeOpacity={0.9} onPress={copyToClipboard}>
+    <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
       <View style={styles.buttonContainer}>
         <View style={styles.iconContainer}>
           <Copy

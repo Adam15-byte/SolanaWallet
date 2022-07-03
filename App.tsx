@@ -14,8 +14,8 @@ import WalletScreen from './src/screens/WalletScreen';
 const App = () => {
   return (
     <SolContextProvider>
-      <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" />
         <WalletScreen />
       </SafeAreaView>
     </SolContextProvider>

@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View, Pressable, ScrollView} from 'react-native';
 import React, {useContext} from 'react';
-import {COLORS, SIZES} from '../consts/consts';
+import {COLORS, FONTS, SIZES} from '../consts/consts';
 import SolContext from '../features/connectionContext';
 import AddressButton from '../components/AddressButton';
 import NetworkTypeButton from '../components/NetworkTypeButton';
@@ -9,17 +9,21 @@ import SquareColorButton from '../components/SquareColorButton';
 import {ArrowDown, ArrowUp, Download} from 'react-native-feather';
 
 const WalletScreen = () => {
-  const {generateNewKeys, keypair, getAirDrop, balance} =
+  const {generateNewKeys, keypair, getAirDrop, balance, usdValue} =
     useContext(SolContext);
   return (
     <ScrollView bounces={false}>
       <View style={styles.container}>
         <View style={styles.topBar}>
-          <AddressButton />
+          <AddressButton onPress={generateNewKeys!} />
           <NetworkTypeButton />
         </View>
         <View style={styles.walletCardContainer}>
-          <BalanceCard />
+          <BalanceCard
+            balance={balance!}
+            usdValue={usdValue!}
+            lastTransaction="31 April 2022"
+          />
         </View>
         <View style={styles.actionButtonsContainer}>
           <SquareColorButton
@@ -37,9 +41,7 @@ const WalletScreen = () => {
           <SquareColorButton
             title="Get free SOL"
             backgroundColor={COLORS.blueSolLogo}
-            onPress={() => {
-              console.log('clicked');
-            }}>
+            onPress={getAirDrop!}>
             <Download
               width={SIZES.ICON_SIZE}
               height={SIZES.ICON_SIZE}
@@ -59,7 +61,17 @@ const WalletScreen = () => {
             />
           </SquareColorButton>
         </View>
-        <View style={styles.transactionHistoryContainer}></View>
+        <View style={styles.transactionHistoryContainer}>
+          <View style={styles.transactionsHeaderContainer}>
+            <Text style={styles.transactionsHeader}>Transactions</Text>
+            <Pressable
+              onPress={() => {
+                console.log('pressed view all');
+              }}>
+              <Text style={styles.viewAllText}>View all</Text>
+            </Pressable>
+          </View>
+        </View>
       </View>
     </ScrollView>
   );
@@ -94,5 +106,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  transactionHistoryContainer: {},
+  transactionHistoryContainer: {
+    flex: 1,
+    width: '100%',
+    marginTop: 30,
+  },
+  transactionsHeaderContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+  },
+  transactionsHeader: {
+    ...FONTS.h2,
+    color: COLORS.white,
+  },
+  viewAllText: {
+    ...FONTS.h3,
+    color: COLORS.blueSolLogo,
+  },
 });
