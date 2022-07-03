@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   hashText: {
-    ...FONTS.h3,
+    ...FONTS.h4,
     color: COLORS.white,
     maxWidth: '70%',
   },

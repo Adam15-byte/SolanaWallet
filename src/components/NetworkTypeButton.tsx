@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   hashText: {
-    ...FONTS.h3,
+    ...FONTS.h4,
     color: COLORS.white,
     maxWidth: '70%',
   },
