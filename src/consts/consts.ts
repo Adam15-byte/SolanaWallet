@@ -33,4 +33,5 @@ export const SIZES = {
   SCREEN_HEIGHT: height,
   BUTTON_HEIGHT: 50,
   SQUARE_BUTTON_HEIGHT: 70,
+  ICON_SIZE: 20,
 };

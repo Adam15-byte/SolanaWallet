@@ -2,43 +2,41 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
 import React from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
-import {Copy} from 'react-native-feather';
+import {ChevronDown} from 'react-native-feather';
 
-const AddressButton = () => {
-  const copyToClipboard = () => {
-    Clipboard.setString('hello world');
-  };
+const NetworkTypeButton = () => {
   return (
-    <TouchableOpacity activeOpacity={0.9} onPress={copyToClipboard}>
+    <TouchableOpacity activeOpacity={0.9}>
       <View style={styles.buttonContainer}>
+        <Text numberOfLines={1} style={styles.hashText}>
+          Devnet
+        </Text>
         <View style={styles.iconContainer}>
-          <Copy
-            width={SIZES.ICON_SIZE}
-            height={SIZES.ICON_SIZE}
+          <ChevronDown
+            width={SIZES.ICON_SIZE + 5}
+            height={SIZES.ICON_SIZE + 5}
+            fill={COLORS.white}
             stroke={COLORS.white}
+            strokeWidth={1}
           />
         </View>
-        <Text numberOfLines={1} style={styles.hashText}>
-          0x5494389nfjds0953054238989458
-        </Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default AddressButton;
+export default NetworkTypeButton;
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: 170,
+    maxWidth: 120,
     height: SIZES.BUTTON_HEIGHT,
     backgroundColor: COLORS.blue,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
     flexDirection: 'row',
-    marginRight: 20,
   },
   hashText: {
     ...FONTS.h3,
@@ -46,6 +44,6 @@ const styles = StyleSheet.create({
     maxWidth: '70%',
   },
   iconContainer: {
-    marginRight: 15,
+    marginLeft: 5,
   },
 });
