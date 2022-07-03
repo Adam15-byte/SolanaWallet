@@ -6,6 +6,7 @@ import {
   PublicKey,
   LAMPORTS_PER_SOL,
   Keypair,
+  ParsedTransactionWithMeta,
 } from '@solana/web3.js';
 
 export interface BalanceObject {
@@ -45,6 +46,8 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
     value: 0,
     isLoading: false,
   });
+  const [transactions, setTransactions] =
+    useState<ParsedTransactionWithMeta | null>(null);
   const [keypair, setKeypair] = useState<Keypair>();
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
   const generateNewKeys = () => {
@@ -53,6 +56,21 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
     console.log('Generated new keypair');
   };
 
+  const updateTransactions = async () => {
+    const signaturesArray: string[] = [];
+    if (keypair) {
+      const transactions = await connection.getSignaturesForAddress(
+        keypair?.publicKey,
+      );
+      transactions.map(transaction => {
+        signaturesArray.push(transaction.signature.toString());
+      });
+      const transactionsDetails = await connection.getTransactions(
+        signaturesArray,
+      );
+      console.log(transactionsDetails[0]?.meta?.postBalances);
+    }
+  };
   const getAirDrop = async () => {
     setBalance(prevState => ({...prevState, isLoading: true}));
     setUsdValue(prevState => ({...prevState, isLoading: true}));
@@ -71,13 +89,13 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
       let solData = await fetch(
         'https://api.coingecko.com/api/v3/coins/solana?tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false',
       ).then(res => res.json());
-      console.log(solData);
       const solPrice = solData.market_data.current_price.usd;
       setUsdValue(prevState => ({
         ...prevState,
         value: (newBalance / LAMPORTS_PER_SOL) * solPrice,
         isLoading: false,
       }));
+      updateTransactions();
     }
   };
 

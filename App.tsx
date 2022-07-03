@@ -9,15 +9,15 @@ import {
 } from 'react-native';
 import {COLORS, SIZES} from './src/consts/consts';
 import {SolContextProvider} from './src/features/connectionContext';
-import WalletScreen from './src/screens/WalletScreen';
+import Navigation from './src/navigation/Navigation';
+import ConnectScreen from './src/screens/ConnectScreen';
 
 const App = () => {
   return (
     <SolContextProvider>
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="light-content" />
-        <WalletScreen />
-      </SafeAreaView>
+      <Navigation />
+      <StatusBar barStyle="light-content" />
+      {/* <ConnectScreen /> */}
     </SolContextProvider>
   );
 };

@@ -1,5 +1,6 @@
 import {StyleSheet, Text, View, Pressable, ScrollView} from 'react-native';
 import React, {useContext} from 'react';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
 import SolContext from '../features/connectionContext';
 import AddressButton from '../components/AddressButton';
@@ -12,10 +13,10 @@ const WalletScreen = () => {
   const {generateNewKeys, keypair, getAirDrop, balance, usdValue} =
     useContext(SolContext);
   return (
-    <ScrollView bounces={false}>
-      <View style={styles.container}>
+    <ScrollView bounces={false} style={styles.scrollContainer}>
+      <SafeAreaView style={styles.container}>
         <View style={styles.topBar}>
-          <AddressButton onPress={generateNewKeys!} />
+          <AddressButton />
           <NetworkTypeButton />
         </View>
         <View style={styles.walletCardContainer}>
@@ -72,7 +73,7 @@ const WalletScreen = () => {
             </Pressable>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </ScrollView>
   );
 };
@@ -80,11 +81,16 @@ const WalletScreen = () => {
 export default WalletScreen;
 
 const styles = StyleSheet.create({
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: COLORS.darkBlue,
+  },
   container: {
     flex: 1,
     width: SIZES.SCREEN_WIDTH,
     paddingHorizontal: 20,
     paddingVertical: 10,
+    backgroundColor: COLORS.darkBlue,
   },
   topBar: {
     height: SIZES.BUTTON_HEIGHT,

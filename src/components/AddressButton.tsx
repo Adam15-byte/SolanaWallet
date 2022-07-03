@@ -1,19 +1,17 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
-import React from 'react';
+import React, {useContext} from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {Copy} from 'react-native-feather';
+import SolContext from '../features/connectionContext';
 
-interface Props {
-  onPress: () => void;
-}
-
-const AddressButton = ({onPress}: Props) => {
+const AddressButton = () => {
+  const {keypair} = useContext(SolContext);
   const copyToClipboard = () => {
-    Clipboard.setString('hello world');
+    if (keypair) Clipboard.setString(keypair.publicKey.toString());
   };
   return (
-    <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
+    <TouchableOpacity activeOpacity={0.9} onPress={copyToClipboard}>
       <View style={styles.buttonContainer}>
         <View style={styles.iconContainer}>
           <Copy
@@ -23,7 +21,7 @@ const AddressButton = ({onPress}: Props) => {
           />
         </View>
         <Text numberOfLines={1} style={styles.hashText}>
-          0x5494389nfjds0953054238989458
+          {keypair?.publicKey.toString()}
         </Text>
       </View>
     </TouchableOpacity>
