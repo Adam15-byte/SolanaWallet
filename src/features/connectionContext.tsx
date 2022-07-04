@@ -8,6 +8,7 @@ import {
   Keypair,
   ParsedTransactionWithMeta,
 } from '@solana/web3.js';
+import moment from 'moment';
 
 export interface BalanceObject {
   balance: number;
@@ -19,10 +20,16 @@ export interface usdValue {
   isLoading: boolean;
 }
 
+export interface Transactions {
+  transactions: null | (null | ParsedTransactionWithMeta)[];
+  isLoading: boolean;
+}
+
 interface SolContext {
   keypair?: Keypair;
   balance?: BalanceObject;
   usdValue?: usdValue;
+  transactions?: Transactions;
   // publicKey?: PublicKey;
   // secretKey?: Uint8Array;
   generateNewKeys?: () => void;
@@ -46,8 +53,10 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
     value: 0,
     isLoading: false,
   });
-  const [transactions, setTransactions] =
-    useState<ParsedTransactionWithMeta | null>(null);
+  const [transactions, setTransactions] = useState<Transactions>({
+    transactions: null,
+    isLoading: false,
+  });
   const [keypair, setKeypair] = useState<Keypair>();
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
   const generateNewKeys = () => {
@@ -59,16 +68,31 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   const updateTransactions = async () => {
     const signaturesArray: string[] = [];
     if (keypair) {
-      const transactions = await connection.getSignaturesForAddress(
-        keypair?.publicKey,
-      );
-      transactions.map(transaction => {
-        signaturesArray.push(transaction.signature.toString());
-      });
-      const transactionsDetails = await connection.getTransactions(
-        signaturesArray,
-      );
-      console.log(transactionsDetails[0]?.meta?.postBalances);
+      try {
+        setTransactions(prevState => ({...prevState, isLoading: true}));
+        const sigantures = await connection.getSignaturesForAddress(
+          keypair?.publicKey,
+        );
+        sigantures.map(sig => {
+          signaturesArray.push(sig.signature.toString());
+        });
+        const transactionsList = await connection.getParsedTransactions(
+          signaturesArray,
+        );
+        setTransactions(prevState => ({
+          ...prevState,
+          transactions: transactionsList,
+          isLoading: false,
+        }));
+        console.log(transactionsList);
+        console.log(
+          moment
+            .unix(transactionsList[0]?.blockTime!)
+            .format('YYYY-MM-DD HH:mm:ss'),
+        );
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
   const getAirDrop = async () => {
@@ -113,7 +137,14 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   }, [keypair]);
   return (
     <SolContext.Provider
-      value={{generateNewKeys, keypair, getAirDrop, balance, usdValue}}>
+      value={{
+        generateNewKeys,
+        keypair,
+        getAirDrop,
+        balance,
+        usdValue,
+        transactions,
+      }}>
       {children}
     </SolContext.Provider>
   );

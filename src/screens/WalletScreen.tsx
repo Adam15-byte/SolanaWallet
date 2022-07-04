@@ -1,4 +1,11 @@
-import {StyleSheet, Text, View, Pressable, ScrollView} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useContext} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
@@ -8,10 +15,18 @@ import NetworkTypeButton from '../components/NetworkTypeButton';
 import BalanceCard from '../components/BalanceCard';
 import SquareColorButton from '../components/SquareColorButton';
 import {ArrowDown, ArrowUp, Download} from 'react-native-feather';
+import TransactionComponents from '../components/TransactionComponents';
+import moment from 'moment';
 
 const WalletScreen = () => {
-  const {generateNewKeys, keypair, getAirDrop, balance, usdValue} =
-    useContext(SolContext);
+  const {
+    generateNewKeys,
+    keypair,
+    getAirDrop,
+    balance,
+    usdValue,
+    transactions,
+  } = useContext(SolContext);
   return (
     <ScrollView bounces={false} style={styles.scrollContainer}>
       <SafeAreaView style={styles.container}>
@@ -29,7 +44,7 @@ const WalletScreen = () => {
         <View style={styles.actionButtonsContainer}>
           <SquareColorButton
             title="Send"
-            backgroundColor={COLORS.green}
+            backgroundColor={COLORS.pink}
             onPress={() => {
               console.log('clicked');
             }}>
@@ -41,7 +56,7 @@ const WalletScreen = () => {
           </SquareColorButton>
           <SquareColorButton
             title="Get free SOL"
-            backgroundColor={COLORS.blueSolLogo}
+            backgroundColor={COLORS.blue}
             onPress={getAirDrop!}>
             <Download
               width={SIZES.ICON_SIZE}
@@ -51,7 +66,7 @@ const WalletScreen = () => {
           </SquareColorButton>
           <SquareColorButton
             title="Receive"
-            backgroundColor={COLORS.pink}
+            backgroundColor={COLORS.green}
             onPress={() => {
               console.log('clicked');
             }}>
@@ -71,6 +86,31 @@ const WalletScreen = () => {
               }}>
               <Text style={styles.viewAllText}>View all</Text>
             </Pressable>
+          </View>
+          <View style={styles.transactionsListContainer}>
+            {transactions?.transactions ? (
+              <>
+                {transactions?.isLoading && (
+                  <ActivityIndicator size="large" color={COLORS.pink} />
+                )}
+                {transactions?.transactions.map(transaction => (
+                  <TransactionComponents
+                    key={transaction?.transaction.signatures[0]!}
+                    TxN={transaction?.transaction.signatures[0]!}
+                    postBalances={transaction?.meta?.postBalances[1]!}
+                    preBalances={transaction?.meta?.preBalances[1]!}
+                    date={moment
+                      .unix(transaction?.blockTime!)
+                      .format('YYYY-MM-DD HH:mm:ss')}
+                  />
+                ))}
+                <Text>There are transactions </Text>
+              </>
+            ) : (
+              <Text style={styles.noTransactionsText}>
+                No transactions to display
+              </Text>
+            )}
           </View>
         </View>
       </SafeAreaView>
@@ -131,5 +171,16 @@ const styles = StyleSheet.create({
   viewAllText: {
     ...FONTS.h3,
     color: COLORS.blueSolLogo,
+  },
+  transactionsListContainer: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    marginTop: 15,
+  },
+  noTransactionsText: {
+    ...FONTS.h3,
+    color: COLORS.white,
   },
 });
