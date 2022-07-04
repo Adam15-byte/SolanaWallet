@@ -16,7 +16,15 @@ import BalanceCard from '../components/BalanceCard';
 import SquareColorButton from '../components/SquareColorButton';
 import {ArrowDown, ArrowUp, Download} from 'react-native-feather';
 import TransactionComponents from '../components/TransactionComponents';
+import {useNavigation} from '@react-navigation/native';
 import moment from 'moment';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {WalletScreenParamList} from '../navigation/Navigation';
+
+type WalletScreenProp = NativeStackNavigationProp<
+  WalletScreenParamList,
+  'WalletScreen'
+>;
 
 const WalletScreen = () => {
   const {
@@ -27,6 +35,7 @@ const WalletScreen = () => {
     usdValue,
     transactions,
   } = useContext(SolContext);
+  const navigation = useNavigation<WalletScreenProp>();
   return (
     <ScrollView bounces={false} style={styles.scrollContainer}>
       <SafeAreaView style={styles.container}>
@@ -45,9 +54,7 @@ const WalletScreen = () => {
           <SquareColorButton
             title="Send"
             backgroundColor={COLORS.pink}
-            onPress={() => {
-              console.log('clicked');
-            }}>
+            onPress={() => navigation.navigate('SendTransactionScreen')}>
             <ArrowUp
               width={SIZES.ICON_SIZE}
               height={SIZES.ICON_SIZE}
@@ -104,7 +111,6 @@ const WalletScreen = () => {
                       .format('YYYY-MM-DD HH:mm:ss')}
                   />
                 ))}
-                <Text>There are transactions </Text>
               </>
             ) : (
               <Text style={styles.noTransactionsText}>

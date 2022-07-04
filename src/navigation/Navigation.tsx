@@ -4,9 +4,19 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ConnectScreen from '../screens/ConnectScreen';
 import WalletScreen from '../screens/WalletScreen';
 import SolContext from '../features/connectionContext';
+import SendTransactionScreen from '../screens/SendTransactionScreen';
 
-const ConnectStack = createNativeStackNavigator();
-const WalletStack = createNativeStackNavigator();
+export type ConnectStackParamList = {
+  ConnectScreen: undefined;
+};
+
+export type WalletScreenParamList = {
+  WalletScreen: undefined;
+  SendTransactionScreen: undefined;
+};
+
+const ConnectStack = createNativeStackNavigator<ConnectStackParamList>();
+const WalletStack = createNativeStackNavigator<WalletScreenParamList>();
 
 const Navigation = () => {
   const {keypair} = useContext(SolContext);
@@ -17,6 +27,10 @@ const Navigation = () => {
           initialRouteName="WalletScreen"
           screenOptions={{headerShown: false}}>
           <WalletStack.Screen name="WalletScreen" component={WalletScreen} />
+          <WalletStack.Screen
+            name="SendTransactionScreen"
+            component={SendTransactionScreen}
+          />
         </WalletStack.Navigator>
       ) : (
         <ConnectStack.Navigator
