@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import React from 'react';
+import React, {useState, useContext} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS, SIZES, FONTS} from '../consts/consts';
 import {ArrowLeft} from 'react-native-feather';
@@ -13,6 +13,8 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletScreenParamList} from '../navigation/Navigation';
 import BlueButton from '../components/BlueButton';
+import SolContext from '../features/connectionContext';
+import {PublicKey} from '@solana/web3.js';
 
 type SendTransactionScreenProp = NativeStackNavigationProp<
   WalletScreenParamList,
@@ -21,6 +23,9 @@ type SendTransactionScreenProp = NativeStackNavigationProp<
 
 const SendTransactionScreen = () => {
   const navigation = useNavigation<SendTransactionScreenProp>();
+  const [walletAddress, setWalletAddress] = useState<PublicKey>();
+  const [solAmount, setSolAmount] = useState<number>();
+  const {sendTransaction} = useContext(SolContext);
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topBarContainer}>
@@ -45,7 +50,13 @@ const SendTransactionScreen = () => {
           <View style={styles.sendToInputContainer}>
             <Text style={styles.infoLittleText}>Receiving wallet address</Text>
             <View style={styles.inputContainer}>
-              <TextInput placeholder="example: DHcni37YojfmwxkUNnwFM5S7iAog2Uybxg2brof2MJSi" />
+              <TextInput
+                value={walletAddress?.toString()}
+                onChangeText={text =>
+                  setWalletAddress(prevState => Uint8Array.from(text))
+                }
+                placeholder="example: DHcni37YojfmwxkUNnwFM5S7iAog2Uybxg2brof2MJSi"
+              />
             </View>
           </View>
         </View>
@@ -57,13 +68,23 @@ const SendTransactionScreen = () => {
           <View style={styles.sendToInputContainer}>
             <Text style={styles.infoLittleText}>How much SOL to send</Text>
             <View style={styles.inputContainer}>
-              <TextInput keyboardType="numeric" placeholder="example: 2" />
+              <TextInput
+                value={solAmount?.toString()}
+                onChangeText={num => setSolAmount(parseInt(num))}
+                keyboardType="numeric"
+                placeholder="example: 2"
+              />
             </View>
           </View>
         </View>
         <BlueButton
           text="Send transaction"
-          onPress={() => console.log('pressed send button')}
+          onPress={() => {
+            console.log('pressed send button');
+            if (walletAddress && solAmount && sendTransaction) {
+              sendTransaction(walletAddress, solAmount);
+            }
+          }}
         />
       </View>
     </SafeAreaView>

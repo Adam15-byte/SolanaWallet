@@ -3,10 +3,14 @@ import React, {createContext, useContext, useState, useEffect} from 'react';
 import {
   clusterApiUrl,
   Connection,
-  PublicKey,
   LAMPORTS_PER_SOL,
   Keypair,
   ParsedTransactionWithMeta,
+  Transaction,
+  SystemProgram,
+  sendAndConfirmTransaction,
+  PublicKey,
+  Signer,
 } from '@solana/web3.js';
 import moment from 'moment';
 
@@ -30,8 +34,7 @@ interface SolContext {
   balance?: BalanceObject;
   usdValue?: usdValue;
   transactions?: Transactions;
-  // publicKey?: PublicKey;
-  // secretKey?: Uint8Array;
+  sendTransaction?: (address: PublicKey, amount: number) => void;
   generateNewKeys?: () => void;
   getAirDrop?: () => void;
 }
@@ -95,15 +98,9 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
       }
     }
   };
-  const getAirDrop = async () => {
-    setBalance(prevState => ({...prevState, isLoading: true}));
-    setUsdValue(prevState => ({...prevState, isLoading: true}));
+
+  const updateBalance = async () => {
     if (keypair) {
-      const signature = await connection.requestAirdrop(
-        keypair!.publicKey,
-        1 * LAMPORTS_PER_SOL,
-      );
-      await connection.confirmTransaction(signature);
       const newBalance = await connection.getBalance(keypair.publicKey);
       setBalance(prevState => ({
         ...prevState,
@@ -119,6 +116,35 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
         value: (newBalance / LAMPORTS_PER_SOL) * solPrice,
         isLoading: false,
       }));
+    }
+  };
+  const getAirDrop = async () => {
+    setBalance(prevState => ({...prevState, isLoading: true}));
+    setUsdValue(prevState => ({...prevState, isLoading: true}));
+    if (keypair) {
+      const signature = await connection.requestAirdrop(
+        keypair!.publicKey,
+        1 * LAMPORTS_PER_SOL,
+      );
+      await connection.confirmTransaction(signature);
+      updateBalance();
+      updateTransactions();
+    }
+  };
+
+  const sendTransaction = async (address: PublicKey, amount: number) => {
+    if (keypair) {
+      let transaction = new Transaction();
+      const signer: Signer = keypair;
+      await transaction.add(
+        SystemProgram.transfer({
+          fromPubkey: keypair!.publicKey,
+          toPubkey: address,
+          lamports: amount * LAMPORTS_PER_SOL,
+        }),
+      );
+      await sendAndConfirmTransaction(connection, transaction, [signer]);
+      updateBalance();
       updateTransactions();
     }
   };
@@ -144,6 +170,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
         balance,
         usdValue,
         transactions,
+        sendTransaction,
       }}>
       {children}
     </SolContext.Provider>
