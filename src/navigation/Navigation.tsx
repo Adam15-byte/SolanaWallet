@@ -5,6 +5,7 @@ import ConnectScreen from '../screens/ConnectScreen';
 import WalletScreen from '../screens/WalletScreen';
 import SolContext from '../features/SolContext';
 import SendTransactionScreen from '../screens/SendTransactionScreen';
+import StorageLoadingScreen from '../screens/StorageLoadingScreen';
 
 export type ConnectStackParamList = {
   ConnectScreen: undefined;
@@ -19,10 +20,12 @@ const ConnectStack = createNativeStackNavigator<ConnectStackParamList>();
 const WalletStack = createNativeStackNavigator<WalletScreenParamList>();
 
 const Navigation = () => {
-  const {keypair} = useContext(SolContext);
+  const {keypair, checkingStorage} = useContext(SolContext);
   return (
     <NavigationContainer>
-      {keypair ? (
+      {checkingStorage ? (
+        <StorageLoadingScreen />
+      ) : keypair ? (
         <WalletStack.Navigator
           initialRouteName="WalletScreen"
           screenOptions={{headerShown: false}}>

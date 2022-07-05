@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -10,14 +10,12 @@ import {
 import {COLORS, SIZES} from './src/consts/consts';
 import {SolContextProvider} from './src/features/SolContext';
 import Navigation from './src/navigation/Navigation';
-import ConnectScreen from './src/screens/ConnectScreen';
 
 const App = () => {
   return (
     <SolContextProvider>
       <Navigation />
       <StatusBar barStyle="light-content" />
-      {/* <ConnectScreen /> */}
     </SolContextProvider>
   );
 };

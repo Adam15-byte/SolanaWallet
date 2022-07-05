@@ -13,6 +13,7 @@ import {
   Signer,
 } from '@solana/web3.js';
 import moment from 'moment';
+import {storeKeypair, getKeypairFromStorage} from '../../storage';
 
 export interface BalanceObject {
   balance: number;
@@ -34,6 +35,7 @@ interface SolContext {
   balance?: BalanceObject;
   usdValue?: usdValue;
   transactions?: Transactions;
+  checkingStorage?: boolean;
   sendTransaction?: (address: PublicKey, amount: number) => void;
   generateNewKeys?: () => void;
   getAirDrop?: () => void;
@@ -60,12 +62,15 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
     transactions: null,
     isLoading: false,
   });
+  const [checkingStorage, setCheckingStorage] = useState<boolean>(true);
   const [keypair, setKeypair] = useState<Keypair>();
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
   const generateNewKeys = () => {
     console.log('trying to get new keypair');
-    setKeypair(() => Keypair.generate());
+    const newKeypair = Keypair.generate();
+    setKeypair(prevState => newKeypair);
     console.log('Generated new keypair');
+    storeKeypair(newKeypair);
   };
 
   const updateTransactions = async () => {
@@ -156,15 +161,23 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   };
 
   useEffect(() => {
+    setCheckingStorage(prevState => true);
+    getKeypairFromStorage().then(res => {
+      if (!res) {
+        setCheckingStorage(prevState => false);
+        return;
+      }
+      setKeypair(res);
+      setCheckingStorage(prevState => false);
+      updateBalance();
+      updateTransactions();
+    });
+  }, []);
+
+  useEffect(() => {
     if (keypair) {
-      setBalance(prevState => ({...prevState, isLoading: true}));
-      connection.getBalance(keypair.publicKey).then(result =>
-        setBalance(prevState => ({
-          ...prevState,
-          balance: result / LAMPORTS_PER_SOL,
-          isLoading: false,
-        })),
-      );
+      updateBalance();
+      updateTransactions();
     }
   }, [keypair]);
   return (
@@ -177,6 +190,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
         usdValue,
         transactions,
         sendTransaction,
+        checkingStorage,
       }}>
       {children}
     </SolContext.Provider>
