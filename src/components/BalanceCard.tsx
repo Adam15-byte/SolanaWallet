@@ -6,18 +6,19 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {COLORS, FONTS} from '../consts/consts';
-import {BalanceObject} from '../features/connectionContext';
-import {usdValue} from '../features/connectionContext';
+import {BalanceObject} from '../features/SolContext';
+import moment from 'moment';
+import solContext, {usdValue} from '../features/SolContext';
 
 interface Props {
   balance: BalanceObject;
   usdValue: usdValue;
-  lastTransaction: string;
 }
 
-const BalanceCard = ({balance, usdValue, lastTransaction}: Props) => {
+const BalanceCard = ({balance, usdValue}: Props) => {
+  const {transactions} = useContext(solContext);
   return (
     <View style={styles.cardContainer}>
       <ImageBackground
@@ -34,7 +35,6 @@ const BalanceCard = ({balance, usdValue, lastTransaction}: Props) => {
             </View>
             <View style={styles.usdAmountLoadingRow}>
               <Text style={styles.usdEquivalent}>
-                {' '}
                 = {usdValue.value.toFixed(2)} USD{' '}
               </Text>
               {usdValue.isLoading && (
@@ -51,7 +51,12 @@ const BalanceCard = ({balance, usdValue, lastTransaction}: Props) => {
         </View>
         <View style={styles.bottomRowForLastTransaction}>
           <Text style={styles.lastTransaction}>
-            Last Transaction: {lastTransaction}
+            Last Transaction:{' '}
+            {transactions?.transactions
+              ? moment
+                  .unix(transactions.transactions[0]!.blockTime!)
+                  .format('YYYY-MM-DD, HH:mm:ss')
+              : '---'}
           </Text>
         </View>
       </ImageBackground>

@@ -3,14 +3,22 @@ import React, {useContext} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS, SIZES} from '../consts/consts';
 import BlueButton from '../components/BlueButton';
-import SolContext from '../features/connectionContext';
+import SolContext from '../features/SolContext';
 
 const ConnectScreen = () => {
   const {generateNewKeys} = useContext(SolContext);
   return (
     <SafeAreaView style={styles.container}>
-      <BlueButton text="Generate new Keypair" onPress={generateNewKeys!} />
-      <BlueButton text="Connect using existing SecretKey" onPress={() => {}} />
+      <BlueButton
+        text="Generate new Keypair"
+        active={true}
+        onPress={generateNewKeys!}
+      />
+      <BlueButton
+        text="Connect using existing SecretKey"
+        active={false}
+        onPress={() => {}}
+      />
     </SafeAreaView>
   );
 };

@@ -1,12 +1,16 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
-import React from 'react';
+import React, {useState} from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {ChevronDown} from 'react-native-feather';
 
 const NetworkTypeButton = () => {
   return (
-    <TouchableOpacity activeOpacity={0.9}>
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={() => {
+        null;
+      }}>
       <View style={styles.buttonContainer}>
         <Text numberOfLines={1} style={styles.hashText}>
           Devnet
@@ -37,6 +41,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 15,
     flexDirection: 'row',
+    opacity: 0.5,
   },
   hashText: {
     ...FONTS.h4,

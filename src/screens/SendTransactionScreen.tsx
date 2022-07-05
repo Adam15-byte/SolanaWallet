@@ -13,8 +13,9 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletScreenParamList} from '../navigation/Navigation';
 import BlueButton from '../components/BlueButton';
-import SolContext from '../features/connectionContext';
-import {PublicKey} from '@solana/web3.js';
+import SolContext from '../features/SolContext';
+import {PublicKey, Keypair} from '@solana/web3.js';
+import bs58 from 'bs58';
 
 type SendTransactionScreenProp = NativeStackNavigationProp<
   WalletScreenParamList,
@@ -23,7 +24,7 @@ type SendTransactionScreenProp = NativeStackNavigationProp<
 
 const SendTransactionScreen = () => {
   const navigation = useNavigation<SendTransactionScreenProp>();
-  const [walletAddress, setWalletAddress] = useState<PublicKey>();
+  const [walletAddress, setWalletAddress] = useState<string>();
   const [solAmount, setSolAmount] = useState<number>();
   const {sendTransaction} = useContext(SolContext);
   return (
@@ -51,10 +52,8 @@ const SendTransactionScreen = () => {
             <Text style={styles.infoLittleText}>Receiving wallet address</Text>
             <View style={styles.inputContainer}>
               <TextInput
-                value={walletAddress?.toString()}
-                onChangeText={text =>
-                  setWalletAddress(prevState => Uint8Array.from(text))
-                }
+                value={walletAddress}
+                onChangeText={text => setWalletAddress(prevState => text)}
                 placeholder="example: DHcni37YojfmwxkUNnwFM5S7iAog2Uybxg2brof2MJSi"
               />
             </View>
@@ -78,11 +77,12 @@ const SendTransactionScreen = () => {
           </View>
         </View>
         <BlueButton
+          active={true}
           text="Send transaction"
           onPress={() => {
-            console.log('pressed send button');
-            if (walletAddress && solAmount && sendTransaction) {
-              sendTransaction(walletAddress, solAmount);
+            if (sendTransaction && solAmount) {
+              const tempPublickKey = new PublicKey(bs58.decode(walletAddress!));
+              sendTransaction(tempPublickKey, solAmount);
             }
           }}
         />

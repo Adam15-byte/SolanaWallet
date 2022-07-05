@@ -69,7 +69,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   };
 
   const updateTransactions = async () => {
-    const signaturesArray: string[] = [];
+    let signaturesArray: string[] = [];
     if (keypair) {
       try {
         setTransactions(prevState => ({...prevState, isLoading: true}));
@@ -133,19 +133,25 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   };
 
   const sendTransaction = async (address: PublicKey, amount: number) => {
+    console.log('initializing sending');
     if (keypair) {
-      let transaction = new Transaction();
-      const signer: Signer = keypair;
-      await transaction.add(
-        SystemProgram.transfer({
-          fromPubkey: keypair!.publicKey,
-          toPubkey: address,
-          lamports: amount * LAMPORTS_PER_SOL,
-        }),
-      );
-      await sendAndConfirmTransaction(connection, transaction, [signer]);
-      updateBalance();
-      updateTransactions();
+      try {
+        console.log('Attempting to send');
+        let transaction = new Transaction().add(
+          SystemProgram.transfer({
+            fromPubkey: keypair.publicKey,
+            toPubkey: address,
+            lamports: amount * LAMPORTS_PER_SOL,
+          }),
+        );
+        console.log('Created transaction');
+        const signer: Signer = keypair;
+        await sendAndConfirmTransaction(connection, transaction, [signer]);
+        updateBalance();
+        updateTransactions();
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 

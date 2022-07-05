@@ -6,6 +6,7 @@ interface SquareButtonProps {
   children: React.ReactNode;
   title: string;
   onPress: () => void;
+  active: boolean;
 }
 
 const SquareColorButton = ({
@@ -13,10 +14,15 @@ const SquareColorButton = ({
   children,
   title,
   onPress,
+  active,
 }: SquareButtonProps) => {
   return (
-    <View style={styles.buttonContainer}>
-      <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
+    <View style={[styles.buttonContainer, {opacity: active ? 1 : 0.5}]}>
+      <TouchableOpacity
+        activeOpacity={active ? 0.8 : 1}
+        onPress={() => {
+          active ? onPress() : null;
+        }}>
         <View style={[styles.buttonStyle, {backgroundColor: backgroundColor}]}>
           {children}
         </View>

@@ -9,7 +9,7 @@ import {
 import React, {useContext} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
-import SolContext from '../features/connectionContext';
+import SolContext from '../features/SolContext';
 import AddressButton from '../components/AddressButton';
 import NetworkTypeButton from '../components/NetworkTypeButton';
 import BalanceCard from '../components/BalanceCard';
@@ -44,15 +44,12 @@ const WalletScreen = () => {
           <NetworkTypeButton />
         </View>
         <View style={styles.walletCardContainer}>
-          <BalanceCard
-            balance={balance!}
-            usdValue={usdValue!}
-            lastTransaction="31 April 2022"
-          />
+          <BalanceCard balance={balance!} usdValue={usdValue!} />
         </View>
         <View style={styles.actionButtonsContainer}>
           <SquareColorButton
             title="Send"
+            active={true}
             backgroundColor={COLORS.pink}
             onPress={() => navigation.navigate('SendTransactionScreen')}>
             <ArrowUp
@@ -63,6 +60,7 @@ const WalletScreen = () => {
           </SquareColorButton>
           <SquareColorButton
             title="Get free SOL"
+            active={true}
             backgroundColor={COLORS.blue}
             onPress={getAirDrop!}>
             <Download
@@ -73,6 +71,7 @@ const WalletScreen = () => {
           </SquareColorButton>
           <SquareColorButton
             title="Receive"
+            active={false}
             backgroundColor={COLORS.green}
             onPress={() => {
               console.log('clicked');
@@ -108,7 +107,7 @@ const WalletScreen = () => {
                     preBalances={transaction?.meta?.preBalances[1]!}
                     date={moment
                       .unix(transaction?.blockTime!)
-                      .format('YYYY-MM-DD HH:mm:ss')}
+                      .format('YYYY-MM-DD, HH:mm:ss')}
                   />
                 ))}
               </>

@@ -3,7 +3,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ConnectScreen from '../screens/ConnectScreen';
 import WalletScreen from '../screens/WalletScreen';
-import SolContext from '../features/connectionContext';
+import SolContext from '../features/SolContext';
 import SendTransactionScreen from '../screens/SendTransactionScreen';
 
 export type ConnectStackParamList = {

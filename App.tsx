@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import {COLORS, SIZES} from './src/consts/consts';
-import {SolContextProvider} from './src/features/connectionContext';
+import {SolContextProvider} from './src/features/SolContext';
 import Navigation from './src/navigation/Navigation';
 import ConnectScreen from './src/screens/ConnectScreen';
 

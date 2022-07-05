@@ -1,5 +1,5 @@
 import {TouchableOpacity, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
 import {ArrowDown, ArrowUp, Copy} from 'react-native-feather';
 import Clipboard from '@react-native-clipboard/clipboard';
@@ -17,10 +17,15 @@ const TransactionComponents = ({
   preBalances,
   date,
 }: Props) => {
+  const [justCopied, setJustCopied] = useState<boolean>(false);
   const finalBalance = (postBalances - preBalances) / LAMPORTS_PER_SOL;
   const isFundsReceived = finalBalance > 0;
   const copyToClipboard = () => {
     Clipboard.setString(TxN);
+    setJustCopied(prevState => true);
+    setTimeout(() => {
+      setJustCopied(prevState => false);
+    }, 2000);
   };
   return (
     <>
@@ -54,14 +59,16 @@ const TransactionComponents = ({
             <TouchableOpacity
               activeOpacity={0.9}
               style={styles.copyTxNButton}
-              onPress={copyToClipboard}>
+              onPress={() => {
+                justCopied ? null : copyToClipboard();
+              }}>
               <Copy
                 stroke={COLORS.white}
                 width={SIZES.ICON_SIZE}
                 height={SIZES.ICON_SIZE}
               />
               <Text style={styles.txnTextStyle} numberOfLines={1}>
-                {TxN}
+                {justCopied ? 'Copied' : TxN}
               </Text>
             </TouchableOpacity>
           </View>

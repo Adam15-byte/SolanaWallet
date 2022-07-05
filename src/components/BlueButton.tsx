@@ -5,12 +5,13 @@ import {FONTS, COLORS, SIZES} from '../consts/consts';
 interface Props {
   text: string;
   onPress: () => void;
+  active: boolean;
 }
 
-const BlueButton = ({text, onPress}: Props) => {
+const BlueButton = ({text, onPress, active}: Props) => {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.9}>
-      <View style={styles.buttonContainer}>
+    <TouchableOpacity onPress={onPress} activeOpacity={active ? 0.8 : 1}>
+      <View style={[styles.buttonContainer, {opacity: active ? 1 : 0.5}]}>
         <Text numberOfLines={1} style={styles.buttonText}>
           {text}
         </Text>
