@@ -50,21 +50,36 @@ interface ChildrenProps {
 export const SolContextProvider: React.FC<ChildrenProps> = ({
   children,
 }: ChildrenProps) => {
+  ////
+  // SOL TOKENS IN ACCOUNT
+  ////
   const [balance, setBalance] = useState<BalanceObject>({
     balance: 0,
     isLoading: false,
   });
+
+  ////
+  // SOL TOKENS IN ACCOUNT VALUED IN USD
+  ////
+
   const [usdValue, setUsdValue] = useState<usdValue>({
     value: 0,
     isLoading: false,
   });
+
+  ////
+  // ARRAY OF TRANSACTIONS
+  ////
   const [transactions, setTransactions] = useState<Transactions>({
     transactions: null,
     isLoading: false,
   });
+
+  // STATE TO HANDLE STEPS
   const [checkingStorage, setCheckingStorage] = useState<boolean>(true);
   const [keypair, setKeypair] = useState<Keypair>();
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+
   const generateNewKeys = () => {
     console.log('trying to get new keypair');
     const newKeypair = Keypair.generate();
@@ -160,6 +175,9 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
     }
   };
 
+  ////
+  // UPON FIRST OPENING CHECK IF KEYS ARE IN STORAGE
+  ////
   useEffect(() => {
     setCheckingStorage(prevState => true);
     getKeypairFromStorage().then(res => {
@@ -195,6 +213,6 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
       {children}
     </SolContext.Provider>
   );
-};;
+};;;
 
 export default SolContext;

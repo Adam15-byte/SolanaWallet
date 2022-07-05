@@ -17,6 +17,13 @@ import SolContext from '../features/SolContext';
 import {PublicKey, Keypair} from '@solana/web3.js';
 import bs58 from 'bs58';
 
+////
+// SCREEN FOR SENDING FUNDS WITH INPUTS FOR RECEPIENT WALLET ADDRESS AND AMOUNT OF TOKENS TO SEND. 
+// CURRENTLY DOESN'T WORK BECAUSE OF SOLANA WEB3.JS ERROR: [ReferenceError: Can't find variable: Buffer]
+////
+
+
+// REQUIRED FOR NAVIGATION
 type SendTransactionScreenProp = NativeStackNavigationProp<
   WalletScreenParamList,
   'SendTransactionScreen'
@@ -36,6 +43,10 @@ const SendTransactionScreen = () => {
     solAmount: null,
   });
   const {sendTransaction, balance} = useContext(SolContext);
+
+  ////
+  // CHECK IF INPUTS ARE CORRECT, IF ALL VALIDATIONS PASS RESET THE ERRORS AND USE THE "sendTransaction" FUNCTION FROM SolContext
+  ////
   const validateAndSend = () => {
     if (walletAddress && solAmount && sendTransaction) {
       if (walletAddress.length < 32 || walletAddress.length > 44) {
@@ -70,6 +81,7 @@ const SendTransactionScreen = () => {
       const tempPublickKey = new PublicKey(bs58.decode(walletAddress!));
       sendTransaction(tempPublickKey, Number(solAmount));
     } else {
+      // IF walletAddress and solAmount are falsy
       setError(prevState => ({
         ...prevState,
         walletAddress: 'Require all values',
@@ -80,6 +92,8 @@ const SendTransactionScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* TOP BAR WITH HEADER AND BUTTON TO GO BACK */}
+
       <View style={styles.topBarContainer}>
         <TouchableOpacity
           style={styles.backButton}
@@ -94,11 +108,17 @@ const SendTransactionScreen = () => {
         </TouchableOpacity>
         <Text style={styles.headerText}>Send transaction</Text>
       </View>
+
+      {/* TEMPORARY BOX FOR WARNING ABOUT THE FUNCTION NOT WORKING */}
+
       <View style={styles.warningContainer}>
         <Text style={styles.warningText}>
           Takes proper inputs, but currently throws error
         </Text>
       </View>
+
+      {/*  INPUTS */}
+
       <View style={styles.inputsContainer}>
         <View style={styles.receiverAddressContainer}>
           <View style={styles.sendToTextContainer}>
@@ -138,6 +158,9 @@ const SendTransactionScreen = () => {
             </Text>
           </View>
         </View>
+
+        {/* SEND BUTTON */}
+
         <BlueButton
           active={true}
           text="Send transaction"

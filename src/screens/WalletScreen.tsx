@@ -21,31 +21,38 @@ import moment from 'moment';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletScreenParamList} from '../navigation/Navigation';
 
+////
+// MAIN SCREEN DISPLAYING THE USERS BALANCES, PUBLIC KEY, TRANSACTIONS PERFORMED ON THE WALLET
+////
+
+// SETUP FOR NAVIGATION WITH TYPESCRIPT
 type WalletScreenProp = NativeStackNavigationProp<
   WalletScreenParamList,
   'WalletScreen'
 >;
 
 const WalletScreen = () => {
-  const {
-    generateNewKeys,
-    keypair,
-    getAirDrop,
-    balance,
-    usdValue,
-    transactions,
-  } = useContext(SolContext);
+  const {getAirDrop, balance, usdValue, transactions} = useContext(SolContext);
   const navigation = useNavigation<WalletScreenProp>();
   return (
     <ScrollView bounces={false} style={styles.scrollContainer}>
       <SafeAreaView style={styles.container}>
+        {/* TOP OF THE SCREEN WITH BUTTONS FOR PUBLIC KEY AND CURRENT NETWORK DISPLAY */}
+
         <View style={styles.topBar}>
           <AddressButton />
           <NetworkTypeButton />
         </View>
+
+        {/* DISPLAY OF CARD WITH INFO ABOUT BALANCES, USD EVALUATION, AND LAST
+        TRANSACTION PERFORMED */}
+
         <View style={styles.walletCardContainer}>
           <BalanceCard balance={balance!} usdValue={usdValue!} />
         </View>
+
+        {/* ROW WITH ACTION BUTTONS */}
+
         <View style={styles.actionButtonsContainer}>
           <SquareColorButton
             title="Send"
@@ -83,9 +90,13 @@ const WalletScreen = () => {
             />
           </SquareColorButton>
         </View>
+
+        {/* TRANSACTION HISTORY */}
+
         <View style={styles.transactionHistoryContainer}>
           <View style={styles.transactionsHeaderContainer}>
             <Text style={styles.transactionsHeader}>Transactions</Text>
+            {/* VIEW ALL CURRENTLY UNAVAILABLE */}
             <Pressable
               onPress={() => {
                 console.log('pressed view all');

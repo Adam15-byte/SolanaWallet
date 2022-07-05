@@ -5,6 +5,12 @@ import {COLORS, SIZES} from '../consts/consts';
 import BlueButton from '../components/BlueButton';
 import SolContext from '../features/SolContext';
 
+////
+// SCREEN SHOWN ON FIRST LOGIN THAT SHOWS TWO BUTTONS.
+// ONE TO CREATE NEW KEYPAIR (public + secret)
+// ONE TO LOGIN USING EXISTING SECRET KEY (CURRENTLY INACTIVE)
+////
+
 const ConnectScreen = () => {
   const {generateNewKeys} = useContext(SolContext);
   return (
@@ -15,7 +21,7 @@ const ConnectScreen = () => {
         onPress={generateNewKeys!}
       />
       <BlueButton
-        text="Connect using existing SecretKey"
+        text="Connect using existing secret key"
         active={false}
         onPress={() => {}}
       />

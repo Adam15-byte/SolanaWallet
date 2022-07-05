@@ -3,7 +3,7 @@ import React from 'react';
 import {COLORS, SIZES} from '../consts/consts';
 
 ////
-// SCREEN SHOWN  
+// SCREEN SHOWN UPON LAUNCHING THE APP, WHEN ASYNC STORAGE CHECKS IF THERE IS A COPY OF SECRET KEY IN STORAGE
 ////
 const StorageLoadingScreen = () => {
   return (

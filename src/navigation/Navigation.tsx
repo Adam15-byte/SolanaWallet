@@ -23,9 +23,14 @@ const Navigation = () => {
   const {keypair, checkingStorage} = useContext(SolContext);
   return (
     <NavigationContainer>
+      {/* UPON OPENING, WHEN THE STORAGE IS CHECKED DISPLAY TEMPORARY LOADING SCREEN WITH SOLANA LOGO */}
+
       {checkingStorage ? (
         <StorageLoadingScreen />
       ) : keypair ? (
+        
+        // IF KEYPAIR IS INSERTED TO STATE THEN RENDER SCREENS FOR BROWSING AND USING WALLET
+
         <WalletStack.Navigator
           initialRouteName="WalletScreen"
           screenOptions={{headerShown: false}}>
@@ -36,6 +41,9 @@ const Navigation = () => {
           />
         </WalletStack.Navigator>
       ) : (
+
+        // SCREEN TO ALLOW USER TO CREATE KEYPAIR OR LOG IN USING EXISTING DATA
+
         <ConnectStack.Navigator
           initialRouteName="ConnectScreen"
           screenOptions={{headerShown: false}}>
