@@ -22,11 +22,62 @@ type SendTransactionScreenProp = NativeStackNavigationProp<
   'SendTransactionScreen'
 >;
 
+interface Error {
+  walletAddress: string | null;
+  solAmount: string | null;
+}
+
 const SendTransactionScreen = () => {
   const navigation = useNavigation<SendTransactionScreenProp>();
   const [walletAddress, setWalletAddress] = useState<string>();
-  const [solAmount, setSolAmount] = useState<number>();
-  const {sendTransaction} = useContext(SolContext);
+  const [solAmount, setSolAmount] = useState<string>();
+  const [error, setError] = useState<Error>({
+    walletAddress: null,
+    solAmount: null,
+  });
+  const {sendTransaction, balance} = useContext(SolContext);
+  const validateAndSend = () => {
+    if (walletAddress && solAmount && sendTransaction) {
+      if (walletAddress.length < 32 || walletAddress.length > 44) {
+        setError(prevState => ({
+          ...prevState,
+          walletAddress: 'Invalid wallet address',
+          solAmount: null,
+        }));
+        return;
+      }
+      if (Number.isNaN(Number(solAmount))) {
+        setError(prevState => ({
+          ...prevState,
+          walletAddress: null,
+          solAmount: 'Must be a number',
+        }));
+        return;
+      }
+      if (Number(solAmount) >= balance!.balance) {
+        setError(prevState => ({
+          ...prevState,
+          walletAddress: null,
+          solAmount: 'Number bigger than your balance',
+        }));
+        return;
+      }
+      setError(prevState => ({
+        ...prevState,
+        walletAddress: null,
+        solAmount: null,
+      }));
+      const tempPublickKey = new PublicKey(bs58.decode(walletAddress!));
+      sendTransaction(tempPublickKey, Number(solAmount));
+    } else {
+      setError(prevState => ({
+        ...prevState,
+        walletAddress: 'Require all values',
+        solAmount: 'Require all values',
+      }));
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topBarContainer}>
@@ -43,6 +94,11 @@ const SendTransactionScreen = () => {
         </TouchableOpacity>
         <Text style={styles.headerText}>Send transaction</Text>
       </View>
+      <View style={styles.warningContainer}>
+        <Text style={styles.warningText}>
+          Takes proper inputs, but currently throws error
+        </Text>
+      </View>
       <View style={styles.inputsContainer}>
         <View style={styles.receiverAddressContainer}>
           <View style={styles.sendToTextContainer}>
@@ -57,6 +113,9 @@ const SendTransactionScreen = () => {
                 placeholder="example: DHcni37YojfmwxkUNnwFM5S7iAog2Uybxg2brof2MJSi"
               />
             </View>
+            <Text style={styles.errorText}>
+              {error.walletAddress ? error.walletAddress : null}
+            </Text>
           </View>
         </View>
         <View style={styles.separator} />
@@ -69,22 +128,20 @@ const SendTransactionScreen = () => {
             <View style={styles.inputContainer}>
               <TextInput
                 value={solAmount?.toString()}
-                onChangeText={num => setSolAmount(parseInt(num))}
+                onChangeText={text => setSolAmount(text)}
                 keyboardType="numeric"
                 placeholder="example: 2"
               />
             </View>
+            <Text style={styles.errorText}>
+              {error.solAmount ? error.solAmount : null}
+            </Text>
           </View>
         </View>
         <BlueButton
           active={true}
           text="Send transaction"
-          onPress={() => {
-            if (sendTransaction && solAmount) {
-              const tempPublickKey = new PublicKey(bs58.decode(walletAddress!));
-              sendTransaction(tempPublickKey, solAmount);
-            }
-          }}
+          onPress={validateAndSend}
         />
       </View>
     </SafeAreaView>
@@ -120,6 +177,17 @@ const styles = StyleSheet.create({
     ...FONTS.h2,
     color: COLORS.white,
     textAlign: 'center',
+  },
+  warningContainer: {
+    marginTop: 50,
+    width: '100%',
+    minHeight: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  warningText: {
+    color: COLORS.red,
+    ...FONTS.h3,
   },
   inputsContainer: {
     marginTop: 20,
@@ -163,6 +231,11 @@ const styles = StyleSheet.create({
   infoLittleText: {
     color: COLORS.white,
     ...FONTS.h4,
+    marginLeft: 10,
+  },
+  errorText: {
+    ...FONTS.h4,
+    color: COLORS.red,
     marginLeft: 10,
   },
 });
