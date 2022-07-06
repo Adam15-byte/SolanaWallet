@@ -45,9 +45,7 @@ interface ChildrenProps {
   children: React.ReactNode;
 }
 
-export const SolContextProvider: React.FC<ChildrenProps> = ({
-  children,
-}: ChildrenProps) => {
+export const SolContextProvider: React.FC<ChildrenProps> = ({children}: ChildrenProps) => {
   ////
   // SOL TOKENS IN ACCOUNT
   ////
@@ -171,7 +169,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   // UPON FIRST OPENING CHECK IF KEYS ARE IN STORAGE
   ////
   useEffect(() => {
-    setCheckingStorage(prevState => true);
+    setCheckingStorage(prevState => false);
 
     getKeypairFromStorage().then(res => {
       if (!res) {
@@ -184,7 +182,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   }, []);
 
   ////
-  // WHEN KEYS
+  // WHEN KEYS CHANGE UPDATE TRANSACTIONS AND BALANCE.
   ////
   useEffect(() => {
     if (keypair) {
@@ -207,6 +205,6 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
       {children}
     </SolContext.Provider>
   );
-};;
+};;;
 
 export default SolContext;
