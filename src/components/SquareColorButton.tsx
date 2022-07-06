@@ -32,7 +32,7 @@ const SquareColorButton = ({
   );
 };
 
-export default SquareColorButton;
+export default React.memo(SquareColorButton);
 
 const styles = StyleSheet.create({
   buttonContainer: {

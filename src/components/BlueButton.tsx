@@ -20,7 +20,7 @@ const BlueButton = ({text, onPress, active}: Props) => {
   );
 };
 
-export default BlueButton;
+export default React.memo(BlueButton);
 
 const styles = StyleSheet.create({
   buttonContainer: {

@@ -40,7 +40,7 @@ const WalletScreen = () => {
         {/* TOP OF THE SCREEN WITH BUTTONS FOR PUBLIC KEY AND CURRENT NETWORK DISPLAY */}
 
         <View style={styles.topBar}>
-          <AddressButton />
+          <AddressButton width={210} />
           <NetworkTypeButton />
         </View>
 
@@ -78,11 +78,9 @@ const WalletScreen = () => {
           </SquareColorButton>
           <SquareColorButton
             title="Receive"
-            active={false}
+            active={true}
             backgroundColor={COLORS.green}
-            onPress={() => {
-              console.log('clicked');
-            }}>
+            onPress={() => navigation.navigate('ReceiveScreen')}>
             <ArrowDown
               width={SIZES.ICON_SIZE}
               height={SIZES.ICON_SIZE}
@@ -122,6 +120,9 @@ const WalletScreen = () => {
                   />
                 ))}
               </>
+            ) : //WHEN THERE ARE NO TRANSACTIONS TO DISPLAY ACTIVITY INDICATOR IF THEY ARE BEING LOADED, IF NOT DISPLAY A TEXT
+            transactions?.isLoading ? (
+              <ActivityIndicator size="large" color={COLORS.pink} />
             ) : (
               <Text style={styles.noTransactionsText}>
                 No transactions to display
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
     height: SIZES.BUTTON_HEIGHT,
     width: '100%',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   walletCardContainer: {

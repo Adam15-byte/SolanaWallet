@@ -5,7 +5,11 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import {Copy} from 'react-native-feather';
 import SolContext from '../features/SolContext';
 
-const AddressButton = () => {
+interface Props {
+  width: number;
+}
+
+const AddressButton = ({width}: Props) => {
   const [justCopied, setJustCopied] = useState<boolean>(false);
   const {keypair} = useContext(SolContext);
   const copyToClipboard = () => {
@@ -27,7 +31,7 @@ const AddressButton = () => {
           copyToClipboard();
         }
       }}>
-      <View style={styles.buttonContainer}>
+      <View style={[styles.buttonContainer, {width: width}]}>
         <View style={styles.iconContainer}>
           <Copy
             width={SIZES.ICON_SIZE}
@@ -35,7 +39,12 @@ const AddressButton = () => {
             stroke={COLORS.white}
           />
         </View>
-        <Text numberOfLines={1} style={styles.hashText}>
+        <Text
+          numberOfLines={1}
+          style={[
+            styles.hashText,
+            {maxWidth: width - 15 - SIZES.ICON_SIZE - 40},
+          ]}>
           {justCopied ? 'Copied' : keypair?.publicKey.toString()}
         </Text>
       </View>
@@ -43,11 +52,10 @@ const AddressButton = () => {
   );
 };
 
-export default AddressButton;
+export default React.memo(AddressButton);
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: 170,
     height: SIZES.BUTTON_HEIGHT,
     backgroundColor: COLORS.blue,
     alignItems: 'center',
@@ -55,12 +63,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 20,
     flexDirection: 'row',
-    marginRight: 20,
   },
   hashText: {
     ...FONTS.h4,
     color: COLORS.white,
-    maxWidth: '70%',
   },
   iconContainer: {
     marginRight: 15,

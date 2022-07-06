@@ -14,14 +14,13 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {WalletScreenParamList} from '../navigation/Navigation';
 import BlueButton from '../components/BlueButton';
 import SolContext from '../features/SolContext';
-import {PublicKey, Keypair} from '@solana/web3.js';
+import {PublicKey} from '@solana/web3.js';
 import bs58 from 'bs58';
 
 ////
-// SCREEN FOR SENDING FUNDS WITH INPUTS FOR RECEPIENT WALLET ADDRESS AND AMOUNT OF TOKENS TO SEND. 
+// SCREEN FOR SENDING FUNDS WITH INPUTS FOR RECEPIENT WALLET ADDRESS AND AMOUNT OF TOKENS TO SEND.
 // CURRENTLY DOESN'T WORK BECAUSE OF SOLANA WEB3.JS ERROR: [ReferenceError: Can't find variable: Buffer]
 ////
-
 
 // REQUIRED FOR NAVIGATION
 type SendTransactionScreenProp = NativeStackNavigationProp<
@@ -47,7 +46,7 @@ const SendTransactionScreen = () => {
   ////
   // CHECK IF INPUTS ARE CORRECT, IF ALL VALIDATIONS PASS RESET THE ERRORS AND USE THE "sendTransaction" FUNCTION FROM SolContext
   ////
-  const validateAndSend = () => {
+  const validateAndSend = React.useCallback(() => {
     if (walletAddress && solAmount && sendTransaction) {
       if (walletAddress.length < 32 || walletAddress.length > 44) {
         setError(prevState => ({
@@ -88,7 +87,7 @@ const SendTransactionScreen = () => {
         solAmount: 'Require all values',
       }));
     }
-  };
+  }, [walletAddress, solAmount]);
 
   return (
     <SafeAreaView style={styles.container}>

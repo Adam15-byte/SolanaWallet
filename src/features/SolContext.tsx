@@ -1,5 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React, {createContext, useContext, useState, useEffect} from 'react';
+import React, {createContext, useState, useEffect} from 'react';
 import {
   clusterApiUrl,
   Connection,
@@ -12,7 +11,6 @@ import {
   PublicKey,
   Signer,
 } from '@solana/web3.js';
-import moment from 'moment';
 import {storeKeypair, getKeypairFromStorage} from '../../storage';
 
 export interface BalanceObject {
@@ -47,9 +45,7 @@ interface ChildrenProps {
   children: React.ReactNode;
 }
 
-export const SolContextProvider: React.FC<ChildrenProps> = ({
-  children,
-}: ChildrenProps) => {
+export const SolContextProvider: React.FC<ChildrenProps> = ({children}: ChildrenProps) => {
   ////
   // SOL TOKENS IN ACCOUNT
   ////
@@ -64,7 +60,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
 
   const [usdValue, setUsdValue] = useState<usdValue>({
     value: 0,
-    isLoading: false,
+    isLoading: true,
   });
 
   ////
@@ -72,7 +68,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   ////
   const [transactions, setTransactions] = useState<Transactions>({
     transactions: null,
-    isLoading: false,
+    isLoading: true,
   });
 
   // STATE TO HANDLE STEPS
@@ -80,13 +76,13 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
   const [keypair, setKeypair] = useState<Keypair>();
   const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-  const generateNewKeys = () => {
+  const generateNewKeys = React.useCallback(() => {
     console.log('trying to get new keypair');
     const newKeypair = Keypair.generate();
     setKeypair(prevState => newKeypair);
     console.log('Generated new keypair');
     storeKeypair(newKeypair);
-  };
+  }, []);
 
   const updateTransactions = async () => {
     let signaturesArray: string[] = [];
@@ -107,12 +103,6 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
           transactions: transactionsList,
           isLoading: false,
         }));
-        console.log(transactionsList);
-        console.log(
-          moment
-            .unix(transactionsList[0]?.blockTime!)
-            .format('YYYY-MM-DD HH:mm:ss'),
-        );
       } catch (e) {
         console.log(e);
       }
@@ -187,11 +177,12 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
       }
       setKeypair(res);
       setCheckingStorage(prevState => false);
-      updateBalance();
-      updateTransactions();
     });
   }, []);
 
+  ////
+  // WHEN KEYS
+  ////
   useEffect(() => {
     if (keypair) {
       updateBalance();
@@ -213,6 +204,6 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({
       {children}
     </SolContext.Provider>
   );
-};;;
+};;
 
 export default SolContext;

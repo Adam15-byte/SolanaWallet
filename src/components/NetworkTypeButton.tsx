@@ -1,7 +1,6 @@
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {COLORS, FONTS, SIZES} from '../consts/consts';
-import React, {useState} from 'react';
-import Clipboard from '@react-native-clipboard/clipboard';
+import React from 'react';
 import {ChevronDown} from 'react-native-feather';
 
 const NetworkTypeButton = () => {
@@ -29,11 +28,11 @@ const NetworkTypeButton = () => {
   );
 };
 
-export default NetworkTypeButton;
+export default React.memo(NetworkTypeButton);
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    maxWidth: 120,
+    width: 110,
     height: SIZES.BUTTON_HEIGHT,
     backgroundColor: COLORS.blue,
     alignItems: 'center',

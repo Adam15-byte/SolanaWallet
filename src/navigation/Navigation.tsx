@@ -6,6 +6,7 @@ import WalletScreen from '../screens/WalletScreen';
 import SolContext from '../features/SolContext';
 import SendTransactionScreen from '../screens/SendTransactionScreen';
 import StorageLoadingScreen from '../screens/StorageLoadingScreen';
+import ReceiveScreen from '../screens/ReceiveScreen';
 
 export type ConnectStackParamList = {
   ConnectScreen: undefined;
@@ -14,6 +15,7 @@ export type ConnectStackParamList = {
 export type WalletScreenParamList = {
   WalletScreen: undefined;
   SendTransactionScreen: undefined;
+  ReceiveScreen: undefined;
 };
 
 const ConnectStack = createNativeStackNavigator<ConnectStackParamList>();
@@ -28,7 +30,6 @@ const Navigation = () => {
       {checkingStorage ? (
         <StorageLoadingScreen />
       ) : keypair ? (
-        
         // IF KEYPAIR IS INSERTED TO STATE THEN RENDER SCREENS FOR BROWSING AND USING WALLET
 
         <WalletStack.Navigator
@@ -39,9 +40,9 @@ const Navigation = () => {
             name="SendTransactionScreen"
             component={SendTransactionScreen}
           />
+          <WalletStack.Screen name="ReceiveScreen" component={ReceiveScreen} />
         </WalletStack.Navigator>
       ) : (
-
         // SCREEN TO ALLOW USER TO CREATE KEYPAIR OR LOG IN USING EXISTING DATA
 
         <ConnectStack.Navigator

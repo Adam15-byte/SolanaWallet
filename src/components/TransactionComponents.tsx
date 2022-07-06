@@ -79,7 +79,7 @@ const TransactionComponents = ({
   );
 };
 
-export default TransactionComponents;
+export default React.memo(TransactionComponents);
 
 const styles = StyleSheet.create({
   container: {
