@@ -24,7 +24,7 @@ export interface usdValue {
 }
 
 export interface Transactions {
-  transactions: null | (null | ParsedTransactionWithMeta)[];
+  transactions: (null | ParsedTransactionWithMeta)[];
   isLoading: boolean;
 }
 
@@ -45,7 +45,9 @@ interface ChildrenProps {
   children: React.ReactNode;
 }
 
-export const SolContextProvider: React.FC<ChildrenProps> = ({children}: ChildrenProps) => {
+export const SolContextProvider: React.FC<ChildrenProps> = ({
+  children,
+}: ChildrenProps) => {
   ////
   // SOL TOKENS IN ACCOUNT
   ////
@@ -67,7 +69,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({children}: Children
   // ARRAY OF TRANSACTIONS
   ////
   const [transactions, setTransactions] = useState<Transactions>({
-    transactions: null,
+    transactions: [],
     isLoading: true,
   });
 
@@ -170,6 +172,7 @@ export const SolContextProvider: React.FC<ChildrenProps> = ({children}: Children
   ////
   useEffect(() => {
     setCheckingStorage(prevState => true);
+
     getKeypairFromStorage().then(res => {
       if (!res) {
         setCheckingStorage(prevState => false);

@@ -103,7 +103,7 @@ const WalletScreen = () => {
             </Pressable>
           </View>
           <View style={styles.transactionsListContainer}>
-            {transactions?.transactions ? (
+            {transactions!.transactions.length > 0 ? (
               <>
                 {transactions?.isLoading && (
                   <ActivityIndicator size="large" color={COLORS.pink} />

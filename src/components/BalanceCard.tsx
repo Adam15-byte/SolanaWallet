@@ -52,9 +52,9 @@ const BalanceCard = ({balance, usdValue}: Props) => {
         <View style={styles.bottomRowForLastTransaction}>
           <Text style={styles.lastTransaction}>
             Last Transaction:{' '}
-            {transactions?.transactions
+            {transactions!.transactions.length > 0
               ? moment
-                  .unix(transactions.transactions[0]!.blockTime!)
+                  .unix(transactions!.transactions[0]?.blockTime!)
                   .format('YYYY-MM-DD, HH:mm:ss')
               : '---'}
           </Text>
